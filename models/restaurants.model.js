@@ -1,4 +1,4 @@
-const { db, DataTypes } = require('../utils/database.util')
+const { db, DataTypes } = require('../utils/database.util');
 
 const Restaurants = db.define('restaurants', {
     id: {
@@ -10,11 +10,22 @@ const Restaurants = db.define('restaurants', {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
     },
-    addresS: {
+    address: {
         type: DataTypes.STRING,
         allowNull: false,
-    }
-})
+    },
+    rating: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'active',
+    },
+});
 
 module.exports = { Restaurants };
