@@ -11,6 +11,7 @@ const {
 
 // Middlewares
 const { mealExist } = require('../middlewares/meal.middlewares');
+const { restaurantExist } = require('../middlewares/restaurant.middlewares')
 const {
     createMealsValidators,
 } = require('../middlewares/validators.middlewares');
@@ -32,7 +33,7 @@ mealsRouter.get('/:id',mealExist, mealsById);
 mealsRouter.use(protectSession);
 mealsRouter.use(protectAdmin);
 
-mealsRouter.post('/:id', createMealsValidators, createMeals);
+mealsRouter.post('/:id',restaurantExist, createMealsValidators, createMeals);
 
 mealsRouter.patch('/:id', mealExist, updateMeal);
 

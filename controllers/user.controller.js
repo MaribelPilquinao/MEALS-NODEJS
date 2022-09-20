@@ -3,10 +3,10 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
 // Models
-const { User } = require('../models/users.model');
-const { Meals } = require('../models/meals.model');
-const { Orders } = require('../models/orders.model');
-const { Restaurants } = require('../models/restaurants.model');
+const { User } = require('../models/user.model');
+const { Meal } = require('../models/meal.model');
+const { Order } = require('../models/order.model');
+const { Restaurant } = require('../models/restaurant.model');
 
 // Utils
 const { catchAsync } = require('../utils/CatchAsync.util');
@@ -18,7 +18,8 @@ const getAllusers = catchAsync(async (req, res, next) => {
     const users = await User.findAll({
         attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
         where: { status: 'active' },
-        include: { model: Orders },
+        require: false,
+        include: { model: Order },
     });
 
     res.status(200).json({
@@ -108,13 +109,13 @@ const orderUser = catchAsync(async (req, res, next) => {
         where: { id },
         attributes: ['id', 'name', 'email'],
         include: {
-            model: Orders,
+            model: Order,
             attributes: ['id', 'totalPrice', 'quantity', 'status'],
             include: {
-                model: Meals,
+                model: Meal,
                 attributes: ['id', 'name', 'price', 'status'],
                 include: {
-                    model: Restaurants,
+                    model: Restaurant,
                     attributes: { exclude: ['createdAt', 'updatedAt'] },
                 },
             },

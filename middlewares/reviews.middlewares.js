@@ -1,31 +1,29 @@
 // Models
-const { Reviews } = require('../models/reviews.model');
+const { Review } = require('../models/review.model');
 // utils
 const { AppError } = require('../utils/appError.util');
+const { catchAsync } = require('../utils/CatchAsync.util');
 
-const reviewExist = async (req, res, next) => {
+const reviewExist = catchAsync(async (req, res, next) => {
     const { id } = req.params;
-    const review = await Reviews.findOne({ where: { id, status: 'active' } });
+    const review = await Review.findOne({ where: { id, status: 'active' } });
 
-    if (!review) return next(new AppError(404, 'Bad request'));
+    if (!review) return next(new AppError('Bad request', 404));
 
     req.review = review;
     next();
-};
+});
 
-const userAlreadyMadeReview = async (req, res, next) => {
+const userAlreadyMadeReview = catchAsync(async (req, res, next) => {
     const { sessionUser } = req;
     const { id } = req.params;
-    const review = await Reviews.findOne({
+    const review = await Review.findOne({
         where: { restaurantId: id, userId: sessionUser.id },
     });
 
-    if (review)
-        return next(
-            new AppError(401, 'The user already made a restaurant review')
-        );
+    if (review) return next(new AppError('The user already made a restaurant review', 401));
 
     next();
-};
+});
 
 module.exports = { reviewExist, userAlreadyMadeReview };

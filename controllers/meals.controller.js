@@ -2,10 +2,10 @@
 const dotenv = require('dotenv');
 
 // Models
-const { Meals } = require('../models/meals.model');
-const { Restaurants } = require('../models/restaurants.model');
-const { User } = require('../models/users.model');
-const { Reviews } = require('../models/reviews.model');
+const { Meal } = require('../models/meal.model');
+const { Restaurant } = require('../models/restaurant.model');
+const { User } = require('../models/user.model');
+const { Review } = require('../models/review.model');
 // Utils
 const { catchAsync } = require('../utils/CatchAsync.util');
 
@@ -13,11 +13,11 @@ const { catchAsync } = require('../utils/CatchAsync.util');
 dotenv.config();
 
 const createMeals = catchAsync(async (req, res, next) => {
-    const { id } = req.restaurant;
+    const { id}   = req.restaurant;
 
     const { name, price } = req.body;
 
-    const newMeal = await Meals.create({
+    const newMeal = await Meal.create({
         name,
         price,
         restaurantId: id,
@@ -30,15 +30,15 @@ const createMeals = catchAsync(async (req, res, next) => {
 });
 
 const getAllMeals = catchAsync(async (req, res, next) => {
-    const meals = await Meals.findAll({
+    const meals = await Meal.findAll({
         where: { status: 'active' },
         attributes: ['id', 'name', 'price'],
         include: {
-            model: Restaurants,
+            model: Restaurant,
             where: { status: 'active' },
             attributes: { exclude: ['status', 'createdAt', 'updatedAt'] },
             include: {
-                model: Reviews,
+                model: Review,
                 where: { status: 'active' },
                 require: false,
                 attributes: ['id', 'comment', 'rating'],
@@ -59,12 +59,12 @@ const getAllMeals = catchAsync(async (req, res, next) => {
 const mealsById = catchAsync(async (req, res, next) => {
     const { id } = req.params;
 
-    const meals = await Meals.findOne({
+    const meals = await Meal.findOne({
         where: { id, status: 'active' },
         attributes: ['id', 'name', 'price'],
         include: [
             {
-                model: Restaurants,
+                model: Restaurant,
                 attributes: ['id', 'name'],
             },
         ],

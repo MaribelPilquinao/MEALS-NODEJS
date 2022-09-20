@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 // Models
-const { Orders } = require('../models/orders.model');
-const { Restaurants } = require('../models/restaurants.model');
-const { Meals } = require('../models/meals.model');
+const { Order } = require('../models/order.model');
+const { Restaurant } = require('../models/restaurant.model');
+const { Meal } = require('../models/meal.model');
 
 const { catchAsync } = require('../utils/CatchAsync.util');
 const { AppError } = require('../utils/appError.util');
@@ -16,7 +16,7 @@ const createOrder = catchAsync(async (req, res, next) => {
 
     const { quantity, mealId } = req.body;
 
-    const meal = await Meals.findOne({
+    const meal = await Meal.findOne({
         where: { id: mealId, status: 'active' },
     });
 
@@ -24,7 +24,7 @@ const createOrder = catchAsync(async (req, res, next) => {
         return next(new AppError(404,'Meal not found'));
     }
 
-    const newOrder = await Orders.create({
+    const newOrder = await Order.create({
         mealId,
         userId: sessionUser.id,
         totalPrice: quantity * meal.price,
@@ -38,19 +38,19 @@ const createOrder = catchAsync(async (req, res, next) => {
 });
 
 const getOrdersUser = catchAsync(async (req, res, next) => {
-    const order = await Orders.findAll({
+    const order = await Order.findAll({
         where: {
             userId: sessionUser.id,
         },
         include: [
             {
-                model: Meals,
+                model: Meal,
                 attributes: {
                     exclude: ['status'],
                 },
                 include: [
                     {
-                        model: Restaurants,
+                        model: Restaurant,
                         attributes: {
                             exclude: ['status'],
                         },

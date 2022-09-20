@@ -12,6 +12,8 @@ const {
     userAlreadyMadeReview,
     reviewExist,
 } = require('../middlewares/reviews.middlewares');
+// Middlewares Restaurants
+const { restaurantExist } = require('../middlewares/restaurant.middlewares');
 const {
     createReviewsValidators,
 } = require('../middlewares/validators.middlewares');
@@ -27,9 +29,9 @@ const reviewRouter = express.Router();
 // Endpoinds protected
 reviewRouter.use(protectSession);
 
-
 reviewRouter.post(
     '/:restaurantId',
+    restaurantExist,
     createReviewsValidators,
     createReviewByRestaurant
 );

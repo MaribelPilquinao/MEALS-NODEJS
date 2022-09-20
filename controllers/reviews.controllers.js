@@ -1,5 +1,6 @@
 // Models
-const { Reviews } = require('../models/reviews.model');
+const { Review } = require('../models/review.model');
+
 // Utils
 const { catchAsync } = require('../utils/CatchAsync.util');
 
@@ -8,13 +9,16 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const createReviewByRestaurant = catchAsync(async (req, res, next) => {
+    
     const restaurantId = req.restaurant.id;
+
+    // const { id } = req.params;
 
     const userId = req.sessionUser.id;
 
     const { comment, rating } = req.body;
 
-    const newReview = await Reviews.create({
+    const newReview = await Review.create({
         userId,
         comment,
         rating,
@@ -23,7 +27,7 @@ const createReviewByRestaurant = catchAsync(async (req, res, next) => {
 
     res.status(201).json({
         status: 'success',
-        newReview,
+        data: { newReview },
     });
 });
 

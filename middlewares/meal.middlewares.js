@@ -1,5 +1,6 @@
-const Meals = require('../models/meals.model');
-const Restaurants = require('../models/restaurants.model');
+const { Meal } = require('../models/meal.model');
+const { Restaurant } = require('../models/restaurant.model');
+
 const { catchAsync } = require('../utils/CatchAsync.util');
 const { AppError } = require('../utils/appError.util');
 const { response } = require('express');
@@ -7,7 +8,7 @@ const { response } = require('express');
 const mealExist = catchAsync(async (req, res = response, next) => {
     const { id } = req.params;
 
-    const meal = await Meals.findOne({
+    const meal = await Meal.findOne({
         where: {
             id,
             status: true,
@@ -15,7 +16,7 @@ const mealExist = catchAsync(async (req, res = response, next) => {
         attributes: { exclude: ['status'] },
         include: [
             {
-                model: Restaurants,
+                model: Restaurant,
                 attributes: {
                     exclude: ['status'],
                 },

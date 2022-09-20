@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
 // Model
-const { User } = require('../models/users.model');
+const { User } = require('../models/user.model');
 
 const { catchAsync } = require('../utils/CatchAsync.util');
 const { AppError } = require('../utils/appError.util');
@@ -20,13 +20,8 @@ const protectSession = catchAsync(async (req, res, next) => {
         token = req.headers.authorization.split(' ')[1];
     }
 
-    if (!token) {
-        return res.status(403).json({
-            status: 'success',
-            message: 'Invalid session',
-        });
-    }
-
+    if (!token) return next(new AppError('Invalid session', 403))
+   
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -34,13 +29,9 @@ const protectSession = catchAsync(async (req, res, next) => {
         where: { id: decoded.id, status: 'active' },
     });
 
-    if (!user) {
-        return res.status(403).json({
-            status: 'error',
-            message: 'The owner of the session is no longer active',
-        });
-    }
 
+    if (!user) return next('The owner of the session is no longer active', 403)
+    
     req.sessionUser = user;
     next();
 });
@@ -49,7 +40,7 @@ const protectReviewOwners = (req, res, next) => {
     const { sessionUser, review } = req;
 
     if (sessionUser.id !== review.userId) {
-        return next(new AppError(403, 'This review does not belong to you.'));
+        return next(new AppError('This review does not belong to you.', 403));
     }
 
     next();
@@ -60,7 +51,7 @@ const protectAdmin = (req, res, next) => {
 
     if (sessionUser.role !== 'admin') {
         return next(
-            new AppError(403, 'You do not have the access level for this data.')
+            new AppError('You do not have the access level for this data.', 403)
         );
     }
 
@@ -72,7 +63,7 @@ const protectUsersAccount = (req, res, next) => {
 
     if (sessionUser.id !== user.id) {
         return next(
-            new AppError(403, 'You are not the owner of this account.')
+            new AppError('You are not the owner of this account.', 403)
         );
     }
 
@@ -83,7 +74,7 @@ const protectOrderOwner = (req, res, next) => {
     const { sessionUser, order } = req;
 
     if (sessionUser.id !== order.userId) {
-        return next(new AppError(403, 'This order does not belong to you.'));
+        return next(new AppError('This order does not belong to you.', 403));
     }
 
     next();

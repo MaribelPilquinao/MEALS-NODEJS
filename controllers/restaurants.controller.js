@@ -1,22 +1,20 @@
-const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
 // Models
-const { Restaurants } = require('../models/restaurants.model');
-const { User } = require('../models/users.model');
-const { Meals } = require('../models/meals.model');
-const { Reviews } = require('../models/reviews.model');
+const { Restaurant } = require('../models/restaurant.model');
+const { User } = require('../models/user.model');
+const { Meal } = require('../models/meal.model');
+const { Review } = require('../models/review.model');
 
 // Utils
 const { catchAsync } = require('../utils/CatchAsync.util');
-const { AppError } = require('../utils/appError.util');
 
 dotenv.config();
 
 const createRestaurant = catchAsync(async (req, res, next) => {
     const { name, address, rating } = req.body;
 
-    const newRestaurant = await Restaurants.create({
+    const newRestaurant = await Restaurant.create({
         name,
         address,
         rating,
@@ -28,14 +26,13 @@ const createRestaurant = catchAsync(async (req, res, next) => {
     });
 });
 const getAllRestaurants = catchAsync(async (req, res, next) => {
-   
 
-    const restaurant = await Restaurants.findAll({
-        where: {status: 'active'},
+    const restaurant = await Restaurant.findAll({
+        where: { status: 'active' },
         attributes: { exclude: ['status', 'createdAt', 'updatedAt'] },
         include: [
             {
-                model: Reviews,
+                model: Review,
                 required: false,
                 where: { status: 'active' },
                 attributes: ['id', 'comment', 'rating'],
@@ -47,13 +44,13 @@ const getAllRestaurants = catchAsync(async (req, res, next) => {
                 },
             },
             {
-                model: Meals,
+                model: Meal,
                 required: false,
                 where: { status: 'active' },
                 attributes: ['id', 'name', 'price'],
             },
         ],
-    });
+    })
 
     res.status(200).json({
         status: 'success',
@@ -63,17 +60,17 @@ const getAllRestaurants = catchAsync(async (req, res, next) => {
 
 const getRestaurantById = catchAsync(async (req, res, next) => {
     const { id } = req.params;
-    const restaurant = await Restaurants.findOne({
+    const restaurant = await Restaurant.findOne({
         where: { id, status: 'active' },
         attributes: ['id', 'name', 'address', 'rating'],
         include: [
             {
-                model: Meals,
+                model: Meal,
                 required: false,
                 attributes: ['id', 'name', 'price'],
             },
             {
-                model: Reviews,
+                model: Review,
                 required: false,
                 attributes: [
                     'id',
