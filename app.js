@@ -8,6 +8,9 @@ const { orderRouter } = require('./routes/orders.routes');
 const { reviewRouter } = require('./routes/reviews.routes');
 const { globalErrorHandler } = require('./controllers/error.controller');
 
+// Controllers
+const { globalErrorHandler } = require('./controllers/error.controller');
+
 // Init Express
 const app = express();
 
