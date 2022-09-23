@@ -6,7 +6,6 @@ const { restaurantRouter } = require('./routes/restaurant.routes');
 const { mealsRouter } = require('./routes/meals.routes');
 const { orderRouter } = require('./routes/orders.routes');
 const { reviewRouter } = require('./routes/reviews.routes');
-const { globalErrorHandler } = require('./controllers/error.controller');
 
 // Controllers
 const { globalErrorHandler } = require('./controllers/error.controller');
